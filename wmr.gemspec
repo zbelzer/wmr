@@ -14,4 +14,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'libhid-ruby', '>= 0.0.1'
   s.add_dependency 'trollop', '>= 1.16.2'
+  s.add_dependency 'redis'
+  s.add_dependency 'yajl-ruby'
+  s.add_dependency 'system_timer'
 end

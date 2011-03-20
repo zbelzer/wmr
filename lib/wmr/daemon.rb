@@ -1,4 +1,6 @@
 require 'trollop'
+require "redis"
+require "yajl/json_gem"
 
 module WMR
   class Daemon
@@ -63,41 +65,41 @@ module WMR
       end
 
       def register_signal_handlers
-        trap('TERM') { @running = false }
-        trap('INT')  { @running = false }
+        trap('TERM') { stop }
+        trap('INT')  { stop }
       end
 
       def start
         @running = true
 
         wmr = Interface.new
+        redis = Redis.new
 
-        begin
-          wmr.initialize!
+        wmr.initialize!
 
-          while @running do
-            wmr.read_data do |type, data|
-              if type == :unknown
-                puts "Unknown packet type: #{type}, skipping"
-              else
-                puts "Processing #{type}"
-                puts data.inspect
-              end
+        while @running do
+          wmr.read_data do |type, data|
+            if type == :unknown
+              puts "Unknown packet type, skipping"
+            else
+              data.merge!(:time => Time.now)
+              redis.rpush type, data.to_json
             end
           end
         end
       rescue => e
         puts "Caught exception:"
         puts e.message
+        stop
         # puts e.backtrace.join("\n")
       ensure
         wmr.cleanup
       end
-    end
 
-    def stop
-      puts "Stopping WMR"
-      @running = false
+      def stop
+        puts "Stopping WMR"
+        @running = false
+      end
     end
   end
 end
