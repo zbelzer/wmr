@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+$:.unshift(File.dirname(__FILE__) + '/../lib')
+
+begin
+  require 'wmr'
+  require 'wmr/daemon'
+rescue LoadError
+  require 'rubygems'
+  retry
+end
+
+WMR::Daemon.run
