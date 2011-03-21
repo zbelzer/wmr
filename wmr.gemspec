@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.homepage           = 'http://github.com/zbelzer/wmr'
   s.summary            = 'An interface to WMR100/200'
   s.require_paths      = ['lib']
-  s.executables        = ['wmr']
+  s.executables        = ['wmr', 'wmr-web']
   s.authors            = ['Zachary Belzer', 'Michael Marion', 'Jason Norris']
   s.email              = ['zbelzer@gmail.com']
   s.version            = File.read('VERSION')
