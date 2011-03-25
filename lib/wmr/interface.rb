@@ -30,6 +30,8 @@ module WMR
   class Interface
     include Colorize
 
+    attr_accessor :buffer, :native_interface
+
     def initialize
       @buffer = FFI::Buffer.new :char, BUF_SIZE
       @remaining = 0
@@ -83,13 +85,13 @@ module WMR
       LibHID::Native.hid_interrupt_read(@native_interface.to_ptr, USB_ENDPOINT_IN + 1, @buffer, RECV_PACKET_LEN, 0)
 
       @position = 1
-      @remaining = [@buffer.get_bytes(0, 1)[0].to_i, 7].min
+      @remaining = [@buffer.get_bytes(0, 1)[0].ord, 7].min
     end
 
     def read_byte
       read_packet while @remaining.zero? 
 
-      byte = @buffer.get_bytes(@position, 1)[0].to_i
+      byte = @buffer.get_bytes(@position, 1)[0].ord
       @position += 1
       @remaining -= 1
 
